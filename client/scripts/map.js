@@ -20,6 +20,36 @@ var mapOptions = {
 // Renders new map
 map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
 
+//////////////////////////
+///       Search       ///
+//////////////////////////
+
+var searchHandler = function() {
+  var places = searchBox.getPlaces();
+
+  if (places.length === 0) {
+    return;
+  }
+  for (var i = 0, marker; marker = markers[i]; i++) {
+    marker.setMap(null);
+  }
+
+  var bounds = new google.maps.LatLngBounds();
+
+  // take search result lat/long
+    // extend the bounds with lat/long
+  // call getRestaurants, 
+    // add bound extension in getRestaurants so that after all markers drop it'll fit the map
+    // to the bounds of the markers.
+
+  window.user.setPosition(places[0].geometry.location);
+  // maybe make a new marker for this?
+
+  bounds.extend(places[0].geometry.location);
+
+  map.fitBounds(bounds);
+};
+
 // Set the default bounds for the autocomplete search results
  // This will bias the search results to the entire globe using the coordinates listed below
 var defaultBounds = new google.maps.LatLngBounds(
@@ -30,68 +60,21 @@ var options = {
  bounds: defaultBounds
 };
 
-// Create the search box and link it to the UI element
-// Get the HTML input element for the autocomplete search box
 var input = document.getElementById('pac-input');
 
 // Create the autocomplete object
- // allow the user to search
- // for and select a place. The sample then displays an info window containing
- // the place ID and other information about the place that the user has
- // selected
 var autocomplete = new google.maps.places.Autocomplete(input, options);
-
 map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
-
-// Create infowindow
 var infowindow = new google.maps.InfoWindow();
 
-// Create the searchbox and link it to the UI element
 var searchBox = new google.maps.places.SearchBox(input);
 
-// Listen for the event fired when the user selects an item from the 
-// pick list. Retrieve the matching places for that item
-google.maps.event.addListener(searchBox, 'places_changed', function() {
+google.maps.event.addListener(searchBox, 'places_changed', searchHandler)
 
-  var places = searchBox.getPlaces();
-
-  if (places.length === 0) {
-    return;
-  }
-  for (var i = 0, marker; marker = markers[i]; i++) {
-    marker.setMap(null);
-  }
-
-  // For each place, get the icon, place name, and location.
-  markers = [];
-  var bounds = new google.maps.LatLngBounds();
-  for (var i = 0, place; place = places[i]; i++) {
-    var image = {
-      url: place.icon,
-      size: new google.maps.Size(71, 71),
-      origin: new google.maps.Point(0, 0),
-      anchor: new google.maps.Point(17, 34),
-      scaledSize: new google.maps.Size(25, 25)
-    };
-
-    // Create a marker for each place.
-    markers[i] = new google.maps.Marker({
-      map: map,
-      icon: image,
-      title: place.name,
-      position: place.geometry.location
-    });
-
-    markers.push(marker);
-
-    bounds.extend(place.geometry.location);
-  }
-
-  map.fitBounds(bounds);
-});
 
 google.maps.event.addListener(map, 'bounds_changed', function() {
  var bounds = map.getBounds();
+ console.log("Bounds Changed!");
  searchBox.setBounds(bounds);
 });
 
