@@ -89,6 +89,7 @@ google.maps.event.addListener(searchBox, 'places_changed', function() {
 
   map.fitBounds(bounds);
 });
+
 google.maps.event.addListener(map, 'bounds_changed', function() {
  var bounds = map.getBounds();
  searchBox.setBounds(bounds);
@@ -150,6 +151,9 @@ var userClickHandler = function() {
 }
 
 var userDragHandler = function() {
+  for (var i = 0, marker; marker = markers[i]; i++) {
+    marker.setMap(null);
+  }
   var lat = this.getPosition().lat().toString();
   var long = this.getPosition().lng().toString();
   getRestaurants(lat, long);
