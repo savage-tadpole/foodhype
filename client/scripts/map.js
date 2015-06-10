@@ -89,6 +89,7 @@ google.maps.event.addListener(searchBox, 'places_changed', function() {
 
   map.fitBounds(bounds);
 });
+
 google.maps.event.addListener(map, 'bounds_changed', function() {
  var bounds = map.getBounds();
  searchBox.setBounds(bounds);
@@ -114,8 +115,9 @@ if(navigator.geolocation) {
       icon: '../images/person-icon.png'
     });
     google.maps.event.addListener(user, 'click', userClickHandler);
+    google.maps.event.addListener(user, 'dragend', userDragHandler);
 
-    getRestaurants();
+    getRestaurants(window.user.getPosition().A.toString(), window.user.getPosition().F.toString());
 
   }, function() {
     handleNoGeolocation(true);
@@ -148,17 +150,27 @@ var userClickHandler = function() {
   }
 }
 
+var userDragHandler = function() {
+  for (var i = 0, marker; marker = markers[i]; i++) {
+    marker.setMap(null);
+  }
+  var lat = this.getPosition().lat().toString();
+  var long = this.getPosition().lng().toString();
+  getRestaurants(lat, long);
+}
+
 //////////////////////////////////////////
 /// Restaurant marker initialization   ///
 //////////////////////////////////////////
 
-var getRestaurants = function() {
+var getRestaurants = function(lat, long) {
   //Global variable for the array of restaurant markers
   window.markers = [];
   var jsonData = {
-    'userLat': window.user.getPosition().A.toString() , 
-    'userLong': window.user.getPosition().F.toString()
+    'userLat': lat,
+    'userLong': long
   };
+
   $.ajax({
     type: "POST",
     url: '/yelpresults',
