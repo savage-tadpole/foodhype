@@ -30,9 +30,6 @@ var searchHandler = function() {
   if (places.length === 0) {
     return;
   }
-  for (var i = 0, marker; marker = markers[i]; i++) {
-    marker.setMap(null);
-  }
 
   var bounds = new google.maps.LatLngBounds();
 
@@ -130,9 +127,6 @@ var userClickHandler = function() {
 }
 
 var userDragHandler = function() {
-  for (var i = 0, marker; marker = markers[i]; i++) {
-    marker.setMap(null);
-  }
   var lat = this.getPosition().lat().toString();
   var long = this.getPosition().lng().toString();
   getRestaurants(lat, long);
@@ -144,6 +138,10 @@ var userDragHandler = function() {
 
 var getRestaurants = function(lat, long) {
   //Global variable for the array of restaurant markers
+  for (var i = 0, marker; marker = markers[i]; i++) {
+    marker.setMap(null);
+  }
+
   window.markers = [];
   var bounds = new google.maps.LatLngBounds();
   var jsonData = {
