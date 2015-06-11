@@ -20,6 +20,38 @@ var mapOptions = {
 // Renders new map
 map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
 
+//////////////////////////
+///       Search       ///
+//////////////////////////
+
+var searchHandler = function() {
+  var places = searchBox.getPlaces();
+
+  if (places.length === 0) {
+    return;
+  }
+
+  var bounds = new google.maps.LatLngBounds();
+
+  //window.user.setPosition(places[0].geometry.location);
+ 
+  searchMarker = new google.maps.Marker({
+    map:map,
+    draggable:true,
+    animation: google.maps.Animation.DROP,
+    position: places[0].geometry.location,
+    icon: '../images/search_marker.png'
+  });
+
+  google.maps.event.addListener(searchMarker, 'dragend', userDragHandler);
+
+  bounds.extend(places[0].geometry.location);
+
+  map.fitBounds(bounds);
+
+  getRestaurants(searchMarker.getPosition().lat().toString(), searchMarker.getPosition().lng().toString());
+};
+
 // Set the default bounds for the autocomplete search results
  // This will bias the search results to the entire globe using the coordinates listed below
 var defaultBounds = new google.maps.LatLngBounds(
@@ -30,68 +62,21 @@ var options = {
  bounds: defaultBounds
 };
 
-// Create the search box and link it to the UI element
-// Get the HTML input element for the autocomplete search box
 var input = document.getElementById('pac-input');
 
 // Create the autocomplete object
- // allow the user to search
- // for and select a place. The sample then displays an info window containing
- // the place ID and other information about the place that the user has
- // selected
 var autocomplete = new google.maps.places.Autocomplete(input, options);
-
 map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
-
-// Create infowindow
 var infowindow = new google.maps.InfoWindow();
 
-// Create the searchbox and link it to the UI element
 var searchBox = new google.maps.places.SearchBox(input);
 
-// Listen for the event fired when the user selects an item from the 
-// pick list. Retrieve the matching places for that item
-google.maps.event.addListener(searchBox, 'places_changed', function() {
+google.maps.event.addListener(searchBox, 'places_changed', searchHandler)
 
-  var places = searchBox.getPlaces();
-
-  if (places.length === 0) {
-    return;
-  }
-  for (var i = 0, marker; marker = markers[i]; i++) {
-    marker.setMap(null);
-  }
-
-  // For each place, get the icon, place name, and location.
-  markers = [];
-  var bounds = new google.maps.LatLngBounds();
-  for (var i = 0, place; place = places[i]; i++) {
-    var image = {
-      url: place.icon,
-      size: new google.maps.Size(71, 71),
-      origin: new google.maps.Point(0, 0),
-      anchor: new google.maps.Point(17, 34),
-      scaledSize: new google.maps.Size(25, 25)
-    };
-
-    // Create a marker for each place.
-    markers[i] = new google.maps.Marker({
-      map: map,
-      icon: image,
-      title: place.name,
-      position: place.geometry.location
-    });
-
-    markers.push(marker);
-
-    bounds.extend(place.geometry.location);
-  }
-
-  map.fitBounds(bounds);
-});
 
 google.maps.event.addListener(map, 'bounds_changed', function() {
  var bounds = map.getBounds();
+ console.log("Bounds Changed!");
  searchBox.setBounds(bounds);
 });
 
@@ -151,9 +136,6 @@ var userClickHandler = function() {
 }
 
 var userDragHandler = function() {
-  for (var i = 0, marker; marker = markers[i]; i++) {
-    marker.setMap(null);
-  }
   var lat = this.getPosition().lat().toString();
   var long = this.getPosition().lng().toString();
   getRestaurants(lat, long);
@@ -165,7 +147,12 @@ var userDragHandler = function() {
 
 var getRestaurants = function(lat, long) {
   //Global variable for the array of restaurant markers
+  for (var i = 0, marker; marker = markers[i]; i++) {
+    marker.setMap(null);
+  }
+
   window.markers = [];
+  var bounds = new google.maps.LatLngBounds();
   var jsonData = {
     'userLat': lat,
     'userLong': long
@@ -183,9 +170,11 @@ var getRestaurants = function(lat, long) {
     console.log(restaurantData);
 
     var makeMarker = function(index) {
+      var restaurantPosition = new google.maps.LatLng(restaurantData[index].latitude, restaurantData[index].longitude);
+      console.log("POS: ", restaurantPosition);
       var marker = new google.maps.Marker({
         map:map,
-        position:new google.maps.LatLng(restaurantData[index].latitude, restaurantData[index].longitude), 
+        position:restaurantPosition,
         animation: google.maps.Animation.DROP,
         icon: '../images/ball-marker.png'
       });
@@ -196,45 +185,18 @@ var getRestaurants = function(lat, long) {
       // Push to globally accessible markers array
       window.markers.push(marker);
 
+      bounds.extend(restaurantPosition);
 
       // Add clickhandler
       google.maps.event.addListener(window.markers[index], 'click', markerClickHandler);    
-    }
+    };
 
     // Add markers to the map and push to the array.
     for(var i = 0; i < restaurantData.length; i++) {
-
       makeMarker(i);
     }
-
-
-  //May animate this later.
-    // var makeMarkerWithTimeout = function(markerIndex) {
-    //   window.setTimeout(function() {
-    //     var marker = new google.maps.Marker({
-    //       map:map,
-    //       position:new google.maps.LatLng(restaurantData[markerIndex].latitude, restaurantData[markerIndex].longitude), 
-    //       animation: google.maps.Animation.DROP,
-    //       icon: '../images/ball-marker.png'
-    //     });
-
-    //     // Attach restaurant data to marker object
-    //     marker.data = restaurantData[markerIndex];
-
-    //     // Push to globally accessible markers array
-    //     window.markers.push(marker);
-
-    //     // Add clickhandler
-    //     google.maps.event.addListener(window.markers[markerIndex], 'click', markerClickHandler);    
-    //   }, timeout);
-    // }
-
-    // // Add markers to the map and push to the array.
-    // for(var i = 0; i < restaurantData.length; i++) {
-    //   makeMarkerWithTimeout(i, i*200);
-    // }
-
-
+    console.log("BOUNDS: ", bounds);
+    map.fitBounds(bounds);
   }.bind(this)); //not sure what the bind is for... -Nick
 
   var markerClickHandler = function(e) {
