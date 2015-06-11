@@ -167,11 +167,10 @@ var getRestaurants = function(lat, long) {
   }).done(  function(restaurantData) {
     restaurantData = JSON.parse(restaurantData);
 
-    console.log(restaurantData);
+    console.log("RESTAURANT DATA: ", restaurantData);
 
     var makeMarker = function(index) {
       var restaurantPosition = new google.maps.LatLng(restaurantData[index].latitude, restaurantData[index].longitude);
-      console.log("POS: ", restaurantPosition);
       var marker = new google.maps.Marker({
         map:map,
         position:restaurantPosition,
@@ -195,7 +194,6 @@ var getRestaurants = function(lat, long) {
     for(var i = 0; i < restaurantData.length; i++) {
       makeMarker(i);
     }
-    console.log("BOUNDS: ", bounds);
     map.fitBounds(bounds);
   }.bind(this)); //not sure what the bind is for... -Nick
 
@@ -203,7 +201,6 @@ var getRestaurants = function(lat, long) {
     console.log(window.markers);
     for(var i = 0; i < window.markers.length; i++) {
       if(e.latLng === window.markers[i].getPosition()) {
-        console.log(window.markers[i].data);
         $(document).trigger('markerClick', [window.markers[i].data]);
       }
     }

@@ -14,19 +14,15 @@ app.use(express.static(__dirname + '/client'));
 app.use(favicon(__dirname + '/client/favicon/favicon.ico'));
 app.use(bodyParser.json());
 
-
 var yelp = require("yelp").createClient(keys.yelp);
 
 var returnNum = 20;
 var allBizs;
 
 app.post('/twilioSend', function(req, res) {
-  console.log(req.body);
   var phoneNumber = req.body.theNum;
   var message = 'Tubular, dude! Check out ' + req.body.restName + ' at ' + req.body.restAddress + ' with a patented FoodHyped score of ' + req.body.restScore;
 
-  console.log(phoneNumber);
-  console.log(keys.twilio.accountSid, keys.twilio.authToken)
   twilioClient.messages.create({
       body: message,
       to: phoneNumber,
@@ -61,6 +57,7 @@ app.post('/yelpresults', function(req, res) {
             apiTalker.contactOtherApis({
               name: business.name,
               id: business.id,
+              categories: business.categories,
               address: business.location.address,
               reviewCount: business.review_count,
               rating: business.rating,
