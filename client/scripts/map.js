@@ -33,14 +33,23 @@ var searchHandler = function() {
 
   var bounds = new google.maps.LatLngBounds();
 
-  window.user.setPosition(places[0].geometry.location);
-  // maybe make a new marker for this?
+  //window.user.setPosition(places[0].geometry.location);
+ 
+  searchMarker = new google.maps.Marker({
+    map:map,
+    draggable:true,
+    animation: google.maps.Animation.DROP,
+    position: places[0].geometry.location,
+    icon: '../images/search_marker.png'
+  });
+
+  google.maps.event.addListener(searchMarker, 'dragend', userDragHandler);
 
   bounds.extend(places[0].geometry.location);
 
   map.fitBounds(bounds);
 
-  getRestaurants(window.user.getPosition().lat().toString(), window.user.getPosition().lng().toString());
+  getRestaurants(searchMarker.getPosition().lat().toString(), searchMarker.getPosition().lng().toString());
 };
 
 // Set the default bounds for the autocomplete search results
@@ -93,7 +102,7 @@ if(navigator.geolocation) {
     google.maps.event.addListener(user, 'click', userClickHandler);
     google.maps.event.addListener(user, 'dragend', userDragHandler);
 
-    //getRestaurants(window.user.getPosition().A.toString(), window.user.getPosition().F.toString());
+    getRestaurants(window.user.getPosition().A.toString(), window.user.getPosition().F.toString());
 
   }, function() {
     handleNoGeolocation(true);
