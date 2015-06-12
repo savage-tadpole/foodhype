@@ -4,6 +4,7 @@
 
 // Creates new map
 var map;
+allRestaurants = {};
 
 // List of all markers
 var markers = [];
@@ -73,12 +74,21 @@ var searchBox = new google.maps.places.SearchBox(input);
 
 google.maps.event.addListener(searchBox, 'places_changed', searchHandler)
 
+var boundsChangedHandler = function(e) {
+  var bounds = map.getBounds();
+  searchBox.setBounds(bounds);
+}
 
-google.maps.event.addListener(map, 'bounds_changed', function() {
- var bounds = map.getBounds();
- console.log("Bounds Changed!");
- searchBox.setBounds(bounds);
-});
+var mapClickHandler = function(e) {
+  if (allRestaurants.data) {
+    console.log("TRIGGERING SENDDATA WITH: ", allRestaurants.data);
+    $(document).trigger('sendData', [allRestaurants.data]);
+  }
+}
+
+google.maps.event.addListener(map, 'bounds_changed', boundsChangedHandler);
+google.maps.event.addListener(map, 'click', mapClickHandler);
+
 
 //////////////////////////
 /// User Geolocation   ///
@@ -166,8 +176,9 @@ var getRestaurants = function(lat, long) {
     data: JSON.stringify(jsonData)
   }).done(  function(restaurantData) {
     restaurantData = JSON.parse(restaurantData);
+    allRestaurants.data = restaurantData;
 
-    console.log("RESTAURANT DATA: ", restaurantData);
+
 
     var makeMarker = function(index) {
       var restaurantPosition = new google.maps.LatLng(restaurantData[index].latitude, restaurantData[index].longitude);
@@ -204,5 +215,5 @@ var getRestaurants = function(lat, long) {
         $(document).trigger('markerClick', [window.markers[i].data]);
       }
     }
-  }
+  };
 }

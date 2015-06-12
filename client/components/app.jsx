@@ -8,19 +8,27 @@ var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 var AppView = React.createClass({
   componentDidMount: function() {
     $(document).on('markerClick', this.handleMarkerClick);
+    //$(document).on('sendData', this.handleDataFromMap);
   },
   handleMarkerClick: function(e, data) {
     //If the user clicks on a marker, update the state, which gets passed to the window view.
     this.setState({
-      selectedMarkerData:data
+      selectedMarkerData: data
     });
     this.render();
+  },
+  handleDataFromMap: function(e, data) {
+    this.setState({
+      restaurantData: data
+    });
+    console.log("GOT DATA: ", this.state);
   },
   getInitialState: function() {
     return {
       selectedMarkerData: {
         display: false,
-      }
+      }, 
+      restaurantData: {}
     }
   },
   render: function() {
