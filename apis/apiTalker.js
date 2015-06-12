@@ -27,6 +27,7 @@ var checkIfAllApisHaveResponded = function(apiData, callback) {
     name: apiData.yelpData.name,
     yelpUrl: apiData.yelpData.yelpUrl,
     twitterUrl: apiData.twitterData.twitterUrl,
+    tweets: apiData.twitterData.tweets,
     instagramPictureUrl: apiData.instagramData.instagramPictureUrl,
     instagramUrl: apiData.instagramData.urlInstagramProfile,
     gPlacesUrl: null,

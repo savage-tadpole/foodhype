@@ -27,13 +27,15 @@ module.exports = {
            var numTweets = tweets.statuses.length;
  
            var leastRecentTweet = tweets.statuses[0];
+           console.log(tweets.statuses.map(function(tweet) { return tweet.geo; }));
            
            var created_at = leastRecentTweet ? leastRecentTweet.created_at : null;
            // Data returned from twitter for each restaurant should be passed back as an object: dataReturnedFromApi into callback 
            var dataFromTwitter = {
                numTweets: numTweets,
                leastRecentTweet: created_at,
-               twitterUrl: url 
+               twitterUrl: url,
+               tweets: tweets.statuses
            };
  
            callback(dataFromTwitter);

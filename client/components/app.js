@@ -31,8 +31,8 @@ var AppView = React.createClass({displayName: "AppView",
       React.createElement("div", {id: "wrapper"}, 
         React.createElement("h1", {id: "title"}, "Food Hyped"), 
         React.createElement("input", {id: "pac-input", className: "controls", type: "text", placeholder: "Start typing here"}), 
-        React.createElement(ReactCSSTransitionGroup, {transitionName: "window", transitionAppear: "true"}, 
-          React.createElement(WindowView, {data: this.state.selectedMarkerData})
+        React.createElement(ReactCSSTransitionGroup, {transitionName: "window", transitionAppear: true}, 
+          React.createElement(WindowView, {key: "window", data: this.state.selectedMarkerData})
         )
       )
     )
