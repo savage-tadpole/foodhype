@@ -97,3 +97,6 @@ var port = process.env.PORT || 3000;
 app.listen(port);
 
 console.log('Express server started on port %s', port);
+
+var cljs = require('./cljs');
+cljs.main();

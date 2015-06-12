@@ -40,3 +40,5 @@ panda-config.js
 
 # xcode (?)
 *.xcuserstate
+
+cljs-js
