@@ -173,8 +173,10 @@ var getRestaurants = function(lat, long) {
   }).done(  function(restaurantData) {
     restaurantData = JSON.parse(restaurantData);
     allRestaurants.data = restaurantData;
-
-
+    restaurantData.forEach(function(r) {
+      var $rest = $('<div class="item"><a href='+r.url+'>'+r.name+'</a>:' + r.score + '</div>');
+      $(".listview").append($rest);
+    });
 
     var makeMarker = function(index) {
       var restaurantPosition = new google.maps.LatLng(restaurantData[index].latitude, restaurantData[index].longitude);

@@ -99,7 +99,8 @@ body{
 #map-canvas {
   height: 500px;
   margin-top: -10px;
-  margin: 0 auto;
+  float: right;
+  width: 70%;
   top:40px;
   position: fixed;
 }
@@ -167,3 +168,33 @@ body{
 .window-leave.window-leave-active {
   opacity: 0.01;
 }
+
+.listView {
+  position: relative;
+  width: 30%;
+  top: 40px;
+  border: 1px solid red;
+  text-align: center;
+} 
+
+.item {
+  font-family:Georgia,serif,Times; 
+  font-size:14px;
+  display:block; 
+  width:auto; 
+  height:35px; 
+  background-color:#333; 
+  border-left:5px solid #222; 
+  border-right:5px solid #222; 
+  padding-left:10px;
+  text-decoration:none; 
+  color:#bfe1f1;
+  -webkit-box-shadow: 0 0 6px 5px rgba(90,90,90,1) ;
+  box-shadow: 0 0 6px 5px rgba(90,90,90,1) ;
+}
+.listView a {
+  color: black;
+  text-decoration: none;
+}
+
+
