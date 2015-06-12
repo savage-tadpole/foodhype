@@ -20,7 +20,6 @@ var AppView = React.createClass({
     this.render();
   },
   handleDataFromMap: function(e, data) {
-    console.log(data);
     this.setState({
       restaurantData: data
     });
@@ -119,11 +118,9 @@ var FilterView = React.createClass({
     var newCheckedCategories = this.state.checkedCategories;
     if (e.target.checked) {
       newCheckedCategories.push(e.target.value);
-      console.log("UPDATED plus: ", newCheckedCategories);
     } else {
       var index = newCheckedCategories.indexOf(e.target.value);
       newCheckedCategories.splice(index, 1);
-      console.log("UPDATED: ", newCheckedCategories);
     }
 
     this.setState({
@@ -137,14 +134,14 @@ var FilterView = React.createClass({
         var restaurantCategory = restaurant.categories[0][0];
         return (
           <div> 
-            <input type="checkbox" onClick={this.handleFilterSelection} /> {restaurantCategory}<br />
+            <input type="checkbox" value = {restaurantCategory} /> {restaurantCategory}<br />
           </div>
         );
       });
 
       return (
         <div className="filterBox">
-          <form>
+          <form onClick={this.handleFilterSelection}>
             {categories}
           </form>
         </div>
