@@ -75,13 +75,13 @@ var searchBox = new google.maps.places.SearchBox(input);
 google.maps.event.addListener(searchBox, 'places_changed', searchHandler)
 
 var boundsChangedHandler = function(e) {
-  if (allRestaurants.data) {
-    console.log("TRIGGERING SENDDATA WITH: ", allRestaurants.data);
-    $(document).trigger('sendData', [allRestaurants.data]);
-  }
   var bounds = map.getBounds();
   searchBox.setBounds(bounds);
-}
+
+  if (allRestaurants.data) {
+    $(document).trigger('sendData', [allRestaurants.data]);
+  }
+};
 
 google.maps.event.addListener(map, 'bounds_changed', boundsChangedHandler);
 

@@ -1,5 +1,7 @@
 var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 
+var restaurantData;
+
 //////////////////////////
 /// React Views        ///
 //////////////////////////
@@ -8,19 +10,27 @@ var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 var AppView = React.createClass({displayName: "AppView",
   componentDidMount: function() {
     $(document).on('markerClick', this.handleMarkerClick);
+    //$(document).on('sendData', this.handleDataFromMap);
   },
   handleMarkerClick: function(e, data) {
     //If the user clicks on a marker, update the state, which gets passed to the window view.
     this.setState({
-      selectedMarkerData:data
+      selectedMarkerData: data
     });
     this.render();
+  },
+  handleDataFromMap: function(e, data) {
+    this.setState({
+      restaurantData: data
+    });
+    console.log("GOT DATA: ", this.state);
   },
   getInitialState: function() {
     return {
       selectedMarkerData: {
         display: false,
-      }
+      }, 
+      restaurantData: {}
     }
   },
   render: function() {
@@ -32,7 +42,8 @@ var AppView = React.createClass({displayName: "AppView",
         React.createElement("input", {id: "pac-input", className: "controls", type: "text", placeholder: "Start typing here"}), 
         React.createElement(ReactCSSTransitionGroup, {transitionName: "window", transitionAppear: "true"}, 
           React.createElement(WindowView, {data: this.state.selectedMarkerData})
-        )
+        ), 
+        React.createElement(FilterView, null)
       )
     )
   }
@@ -99,24 +110,39 @@ var WindowView = React.createClass({displayName: "WindowView",
   }
 });
 
-// var FilterView = React.createClass({
-//   componentDidMount: function() {
-//     // set up listener for 
-//   },
-//   getInitialState: function() {
+var FilterView = React.createClass({displayName: "FilterView",
+  getInitialState: function() {
+    return {
+      checkedCategories: []
+    }
+  },
+  handleFilterSelection: function(e) {
+    var newCheckedCategories = this.state.checkedCategories;
+    if (e.target.checked) {
+      newCheckedCategories.push(e.target.name);
+      console.log("UPDATED plus: ", newCheckedCategories);
+    } else {
+      var index = newCheckedCategories.indexOf(e.target.name);
+      newCheckedCategories.splice(index, 1);
+      console.log("UPDATED: ", newCheckedCategories);
+    }
 
-//   },
-//   render: function() {
-//     return (
-//       <div className="filterBox">
-//         <form method="get">
-//           <input type="checkbox" name="type" value="Mexican"> Mexican<br>
-//           <input type="checkbox" name="type" value="Vietnamese" checked> Vietnamese<br>
-//         </form>
-//       </div>
-//     );
-//   }
-// })
+    this.setState({
+      checkedCategories: newCheckedCategories
+    });
+    $(document).trigger('filterChange', [newCheckedCategories]);
+  }, 
+  render: function() {
+    return (
+      React.createElement("div", {className: "filterBox"}, 
+        React.createElement("form", null, 
+          React.createElement("input", {type: "checkbox", name: "mexican", onClick: this.handleFilterSelection}), " Mexican", React.createElement("br", null), 
+          React.createElement("input", {type: "checkbox", name: "burgers", onClick: this.handleFilterSelection}), " Burgers", React.createElement("br", null)
+        )
+      )
+    );
+  }
+});
 
 // Renders the whole application
 React.render(

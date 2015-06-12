@@ -1,5 +1,7 @@
 var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 
+var restaurantData;
+
 //////////////////////////
 /// React Views        ///
 //////////////////////////
@@ -18,7 +20,6 @@ var AppView = React.createClass({
     this.render();
   },
   handleDataFromMap: function(e, data) {
-    console.log(data);
     this.setState({
       restaurantData: data
     });
@@ -40,6 +41,7 @@ var AppView = React.createClass({
         <ReactCSSTransitionGroup transitionName="window" transitionAppear="true">
           <WindowView data={this.state.selectedMarkerData} />
         </ReactCSSTransitionGroup>
+        <FilterView />
       </div>
     )
   }
@@ -103,6 +105,40 @@ var WindowView = React.createClass({
         <a onClick={this.handleTwilioClick}><button className="linkButton" id="twilio"></button></a>
       </div>
     )
+  }
+});
+
+var FilterView = React.createClass({
+  getInitialState: function() {
+    return {
+      checkedCategories: []
+    }
+  },
+  handleFilterSelection: function(e) {
+    var newCheckedCategories = this.state.checkedCategories;
+    if (e.target.checked) {
+      newCheckedCategories.push(e.target.name);
+      console.log("UPDATED plus: ", newCheckedCategories);
+    } else {
+      var index = newCheckedCategories.indexOf(e.target.name);
+      newCheckedCategories.splice(index, 1);
+      console.log("UPDATED: ", newCheckedCategories);
+    }
+
+    this.setState({
+      checkedCategories: newCheckedCategories
+    });
+    $(document).trigger('filterChange', [newCheckedCategories]);
+  }, 
+  render: function() {
+    return (
+      <div className="filterBox">
+        <form>
+          <input type="checkbox" name="mexican" onClick={this.handleFilterSelection} /> Mexican<br/>
+          <input type="checkbox" name="burgers" onClick={this.handleFilterSelection} /> Burgers<br/>
+        </form>
+      </div>
+    );
   }
 });
 
