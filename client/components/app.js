@@ -17,7 +17,6 @@ var AppView = React.createClass({displayName: "AppView",
     this.render();
   },
   getInitialState: function() {
-    // Fakey data
     return {
       selectedMarkerData: {
         display: false,
@@ -82,10 +81,8 @@ var WindowView = React.createClass({displayName: "WindowView",
   },
   render: function() {
     if(this.props.data.display === false) {return(React.createElement("div", null));}
-    console.log(this.props.data);
     var instagramPictureUrl = this.props.data.instagramPictureUrl ||
       'http://upload.wikimedia.org/wikipedia/commons/0/0c/Cow_female_black_white.jpg';
-    console.log(instagramPictureUrl);
     return (
       React.createElement("div", {id: "window"}, 
         React.createElement("div", {id: "windowTitle"}, this.props.data.name), 
@@ -102,20 +99,24 @@ var WindowView = React.createClass({displayName: "WindowView",
   }
 });
 
-// var LinkButton = React.createClass({
+// var FilterView = React.createClass({
+//   componentDidMount: function() {
+//     // set up listener for 
+//   },
+//   getInitialState: function() {
+
+//   },
 //   render: function() {
-//     if(!this.props.url) {
-//       return (<span></span>)
-//     } else {
-//       return(
-//         <a href={this.props.url}><button className="linkButton" id={this.props.id}></button></a>
-//       )
-//     }
+//     return (
+//       <div className="filterBox">
+//         <form method="get">
+//           <input type="checkbox" name="type" value="Mexican"> Mexican<br>
+//           <input type="checkbox" name="type" value="Vietnamese" checked> Vietnamese<br>
+//         </form>
+//       </div>
+//     );
 //   }
-// });
-
-//<LinkButton url={this.props.data.yelpUrl} id={"yelp"} />
-
+// })
 
 // Renders the whole application
 React.render(

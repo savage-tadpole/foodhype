@@ -8,20 +8,27 @@ var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 var AppView = React.createClass({
   componentDidMount: function() {
     $(document).on('markerClick', this.handleMarkerClick);
+    $(document).on('sendData', this.handleDataFromMap);
   },
   handleMarkerClick: function(e, data) {
     //If the user clicks on a marker, update the state, which gets passed to the window view.
     this.setState({
-      selectedMarkerData:data
+      selectedMarkerData: data
     });
     this.render();
   },
+  handleDataFromMap: function(e, data) {
+    console.log(data);
+    this.setState({
+      restaurantData: data
+    });
+  },
   getInitialState: function() {
-    // Fakey data
     return {
       selectedMarkerData: {
         display: false,
-      }
+      }, 
+      restaurantData: {}
     }
   },
   render: function() {
@@ -30,7 +37,6 @@ var AppView = React.createClass({
     return (
       <div id="wrapper">
         <h1 id="title">Food Hyped</h1>
-        <input id="pac-input" className="controls" type="text" placeholder="Start typing here"></input>
         <ReactCSSTransitionGroup transitionName="window" transitionAppear="true">
           <WindowView data={this.state.selectedMarkerData} />
         </ReactCSSTransitionGroup>
@@ -82,10 +88,8 @@ var WindowView = React.createClass({
   },
   render: function() {
     if(this.props.data.display === false) {return(<div></div>);}
-    console.log(this.props.data);
     var instagramPictureUrl = this.props.data.instagramPictureUrl ||
       'http://upload.wikimedia.org/wikipedia/commons/0/0c/Cow_female_black_white.jpg';
-    console.log(instagramPictureUrl);
     return (
       <div id="window">
         <div id="windowTitle">{this.props.data.name}</div>
@@ -101,21 +105,6 @@ var WindowView = React.createClass({
     )
   }
 });
-
-// var LinkButton = React.createClass({
-//   render: function() {
-//     if(!this.props.url) {
-//       return (<span></span>)
-//     } else {
-//       return(
-//         <a href={this.props.url}><button className="linkButton" id={this.props.id}></button></a>
-//       )
-//     }
-//   }
-// });
-
-//<LinkButton url={this.props.data.yelpUrl} id={"yelp"} />
-
 
 // Renders the whole application
 React.render(

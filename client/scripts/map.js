@@ -4,6 +4,7 @@
 
 // Creates new map
 var map;
+allRestaurants = {};
 
 // List of all markers
 var markers = [];
@@ -73,12 +74,17 @@ var searchBox = new google.maps.places.SearchBox(input);
 
 google.maps.event.addListener(searchBox, 'places_changed', searchHandler)
 
+var boundsChangedHandler = function(e) {
+  if (allRestaurants.data) {
+    console.log("TRIGGERING SENDDATA WITH: ", allRestaurants.data);
+    $(document).trigger('sendData', [allRestaurants.data]);
+  }
+  var bounds = map.getBounds();
+  searchBox.setBounds(bounds);
+}
 
-google.maps.event.addListener(map, 'bounds_changed', function() {
- var bounds = map.getBounds();
- console.log("Bounds Changed!");
- searchBox.setBounds(bounds);
-});
+google.maps.event.addListener(map, 'bounds_changed', boundsChangedHandler);
+
 
 //////////////////////////
 /// User Geolocation   ///
@@ -166,12 +172,12 @@ var getRestaurants = function(lat, long) {
     data: JSON.stringify(jsonData)
   }).done(  function(restaurantData) {
     restaurantData = JSON.parse(restaurantData);
+    allRestaurants.data = restaurantData;
 
-    console.log(restaurantData);
+
 
     var makeMarker = function(index) {
       var restaurantPosition = new google.maps.LatLng(restaurantData[index].latitude, restaurantData[index].longitude);
-      console.log("POS: ", restaurantPosition);
       var marker = new google.maps.Marker({
         map:map,
         position:restaurantPosition,
@@ -195,17 +201,15 @@ var getRestaurants = function(lat, long) {
     for(var i = 0; i < restaurantData.length; i++) {
       makeMarker(i);
     }
-    console.log("BOUNDS: ", bounds);
     map.fitBounds(bounds);
   }.bind(this)); //not sure what the bind is for... -Nick
-
+  
   var markerClickHandler = function(e) {
     console.log(window.markers);
     for(var i = 0; i < window.markers.length; i++) {
       if(e.latLng === window.markers[i].getPosition()) {
-        console.log(window.markers[i].data);
         $(document).trigger('markerClick', [window.markers[i].data]);
       }
     }
-  }
+  };
 }
