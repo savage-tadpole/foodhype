@@ -8,7 +8,7 @@ var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 var AppView = React.createClass({
   componentDidMount: function() {
     $(document).on('markerClick', this.handleMarkerClick);
-    //$(document).on('sendData', this.handleDataFromMap);
+    $(document).on('sendData', this.handleDataFromMap);
   },
   handleMarkerClick: function(e, data) {
     //If the user clicks on a marker, update the state, which gets passed to the window view.
@@ -18,10 +18,10 @@ var AppView = React.createClass({
     this.render();
   },
   handleDataFromMap: function(e, data) {
+    console.log(data);
     this.setState({
       restaurantData: data
     });
-    console.log("GOT DATA: ", this.state);
   },
   getInitialState: function() {
     return {
@@ -37,7 +37,6 @@ var AppView = React.createClass({
     return (
       <div id="wrapper">
         <h1 id="title">Food Hyped</h1>
-        <input id="pac-input" className="controls" type="text" placeholder="Start typing here"></input>
         <ReactCSSTransitionGroup transitionName="window" transitionAppear="true">
           <WindowView data={this.state.selectedMarkerData} />
         </ReactCSSTransitionGroup>
