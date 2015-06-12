@@ -20,6 +20,7 @@ var AppView = React.createClass({
     this.render();
   },
   handleDataFromMap: function(e, data) {
+    console.log(data);
     this.setState({
       restaurantData: data
     });
@@ -41,7 +42,7 @@ var AppView = React.createClass({
         <ReactCSSTransitionGroup transitionName="window" transitionAppear="true">
           <WindowView data={this.state.selectedMarkerData} />
         </ReactCSSTransitionGroup>
-        <FilterView />
+        <FilterView data={this.state.restaurantData}/>
       </div>
     )
   }
