@@ -75,19 +75,15 @@ var searchBox = new google.maps.places.SearchBox(input);
 google.maps.event.addListener(searchBox, 'places_changed', searchHandler)
 
 var boundsChangedHandler = function(e) {
-  var bounds = map.getBounds();
-  searchBox.setBounds(bounds);
-}
-
-var mapClickHandler = function(e) {
   if (allRestaurants.data) {
     console.log("TRIGGERING SENDDATA WITH: ", allRestaurants.data);
     $(document).trigger('sendData', [allRestaurants.data]);
   }
+  var bounds = map.getBounds();
+  searchBox.setBounds(bounds);
 }
 
 google.maps.event.addListener(map, 'bounds_changed', boundsChangedHandler);
-google.maps.event.addListener(map, 'click', mapClickHandler);
 
 
 //////////////////////////
@@ -207,7 +203,7 @@ var getRestaurants = function(lat, long) {
     }
     map.fitBounds(bounds);
   }.bind(this)); //not sure what the bind is for... -Nick
-
+  
   var markerClickHandler = function(e) {
     console.log(window.markers);
     for(var i = 0; i < window.markers.length; i++) {
