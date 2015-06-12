@@ -79,11 +79,13 @@ var boundsChangedHandler = function(e) {
   searchBox.setBounds(bounds);
   
   if (allRestaurants.data) {
+    console.log("TRIGGERING SENDDATA WITH: ", allRestaurants.data);
     $(document).trigger('sendData', [allRestaurants.data]);
   }
 };
 
 google.maps.event.addListener(map, 'bounds_changed', boundsChangedHandler);
+
 
 //////////////////////////
 /// User Geolocation   ///
@@ -173,42 +175,48 @@ var getRestaurants = function(lat, long) {
     restaurantData = JSON.parse(restaurantData);
     allRestaurants.data = restaurantData;
 
+
+
+    var makeMarker = function(index) {
+      var restaurantPosition = new google.maps.LatLng(restaurantData[index].latitude, restaurantData[index].longitude);
+      var marker = new google.maps.Marker({
+        map:map,
+        category: restaurantData[index].categories[0][0],
+        position:restaurantPosition,
+        animation: google.maps.Animation.DROP,
+        icon: '../images/ball-marker.png',
+        visible: false
+      });
+
+      // Attach restaurant data to marker object
+      marker.data = restaurantData[index];
+
+      // Push to globally accessible markers array
+      window.markers.push(marker);
+
+      bounds.extend(restaurantPosition);
+
+      // Add clickhandler
+      google.maps.event.addListener(window.markers[index], 'click', markerClickHandler);    
+    };
+
+    // Add markers to the map and push to the array.
+    for(var i = 0; i < restaurantData.length; i++) {
+      makeMarker(i);
+    }
     map.fitBounds(bounds);
   }.bind(this)); //not sure what the bind is for... -Nick
   
-  
-  var makeMarker = function(index) {
-    var restaurantPosition = new google.maps.LatLng(allRestaurants.data[index].latitude, allRestaurants.data[index].longitude);
-    var marker = new google.maps.Marker({
-      map:map,
-      position:restaurantPosition,
-      animation: google.maps.Animation.DROP,
-      icon: '../images/ball-marker.png'
-    });
-
-    // Attach restaurant data to marker object
-    marker.data = allRestaurants.data[index];
-
-    // Push to globally accessible markers array
-    window.markers.push(marker);
-
-    bounds.extend(restaurantPosition);
-
-    // Add clickhandler
-    google.maps.event.addListener(window.markers[index], 'click', markerClickHandler);    
-  };
-
-
-  
-  $(document).on('filterChange', function(e, data) {
-    // data is an array of the strings with the categories to show
-    //['Mexican', 'Burgers']
-    for(var i = 0; i < allRestaurants.data.length; i++) {
-      if (data.indexOf(allRestaurants.data[i].categories[0][0]) >= 0)
-      makeMarker(i);
+$(document).on('filterChange', function(e, data) {
+  console.log("FILTER CHANGE: ", data);
+  for (var i = 0; i < window.markers.length; i++) {
+    if (data.indexOf(window.markers[i].category) < 0) {
+      window.markers[i].setVisible(false);
+    } else {
+      window.markers[i].setVisible(true);
     }
-
-  });
+  }
+});
 
 
   var markerClickHandler = function(e) {

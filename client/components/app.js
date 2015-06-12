@@ -134,7 +134,7 @@ var FilterView = React.createClass({displayName: "FilterView",
         var restaurantCategory = restaurant.categories[0][0];
         return (
           React.createElement("div", null, 
-            React.createElement("input", {type: "checkbox", value: restaurantCategory}), " ", restaurantCategory, React.createElement("br", null)
+            React.createElement("input", {type: "checkbox", value: restaurantCategory}), " ", restaurantCategory
           )
         );
       });
