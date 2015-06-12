@@ -118,10 +118,10 @@ var FilterView = React.createClass({displayName: "FilterView",
   handleFilterSelection: function(e) {
     var newCheckedCategories = this.state.checkedCategories;
     if (e.target.checked) {
-      newCheckedCategories.push(e.target.name);
+      newCheckedCategories.push(e.target.value);
       console.log("UPDATED plus: ", newCheckedCategories);
     } else {
-      var index = newCheckedCategories.indexOf(e.target.name);
+      var index = newCheckedCategories.indexOf(e.target.value);
       newCheckedCategories.splice(index, 1);
       console.log("UPDATED: ", newCheckedCategories);
     }
@@ -132,14 +132,26 @@ var FilterView = React.createClass({displayName: "FilterView",
     $(document).trigger('filterChange', [newCheckedCategories]);
   }, 
   render: function() {
-    return (
-      React.createElement("div", {className: "filterBox"}, 
-        React.createElement("form", null, 
-          React.createElement("input", {type: "checkbox", name: "mexican", onClick: this.handleFilterSelection}), " Mexican", React.createElement("br", null), 
-          React.createElement("input", {type: "checkbox", name: "burgers", onClick: this.handleFilterSelection}), " Burgers", React.createElement("br", null)
+    if (Array.isArray(this.props.data)) {
+      var categories = this.props.data.map(function(restaurant) {
+        var restaurantCategory = restaurant.categories[0][0];
+        return (
+          React.createElement("div", null, 
+            React.createElement("input", {type: "checkbox", onClick: this.handleFilterSelection}), " ", restaurantCategory, React.createElement("br", null)
+          )
+        );
+      });
+
+      return (
+        React.createElement("div", {className: "filterBox"}, 
+          React.createElement("form", null, 
+            categories
+          )
         )
-      )
-    );
+      );
+    } else {
+      return (React.createElement("div", null));
+    }
   }
 });
 

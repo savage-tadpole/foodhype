@@ -77,7 +77,7 @@ google.maps.event.addListener(searchBox, 'places_changed', searchHandler)
 var boundsChangedHandler = function(e) {
   var bounds = map.getBounds();
   searchBox.setBounds(bounds);
-
+  
   if (allRestaurants.data) {
     $(document).trigger('sendData', [allRestaurants.data]);
   }

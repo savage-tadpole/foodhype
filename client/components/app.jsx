@@ -118,10 +118,10 @@ var FilterView = React.createClass({
   handleFilterSelection: function(e) {
     var newCheckedCategories = this.state.checkedCategories;
     if (e.target.checked) {
-      newCheckedCategories.push(e.target.name);
+      newCheckedCategories.push(e.target.value);
       console.log("UPDATED plus: ", newCheckedCategories);
     } else {
-      var index = newCheckedCategories.indexOf(e.target.name);
+      var index = newCheckedCategories.indexOf(e.target.value);
       newCheckedCategories.splice(index, 1);
       console.log("UPDATED: ", newCheckedCategories);
     }
@@ -132,14 +132,26 @@ var FilterView = React.createClass({
     $(document).trigger('filterChange', [newCheckedCategories]);
   }, 
   render: function() {
-    return (
-      <div className="filterBox">
-        <form>
-          <input type="checkbox" name="mexican" onClick={this.handleFilterSelection} /> Mexican<br/>
-          <input type="checkbox" name="burgers" onClick={this.handleFilterSelection} /> Burgers<br/>
-        </form>
-      </div>
-    );
+    if (Array.isArray(this.props.data)) {
+      var categories = this.props.data.map(function(restaurant) {
+        var restaurantCategory = restaurant.categories[0][0];
+        return (
+          <div> 
+            <input type="checkbox" onClick={this.handleFilterSelection} /> {restaurantCategory}<br />
+          </div>
+        );
+      });
+
+      return (
+        <div className="filterBox">
+          <form>
+            {categories}
+          </form>
+        </div>
+      );
+    } else {
+      return (<div></div>);
+    }
   }
 });
 
