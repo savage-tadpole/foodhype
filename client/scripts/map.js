@@ -79,7 +79,6 @@ var boundsChangedHandler = function(e) {
   searchBox.setBounds(bounds);
   
   if (allRestaurants.data) {
-    console.log("TRIGGERING SENDDATA WITH: ", allRestaurants.data);
     $(document).trigger('sendData', [allRestaurants.data]);
   }
 };
@@ -208,7 +207,6 @@ var getRestaurants = function(lat, long) {
   }.bind(this)); //not sure what the bind is for... -Nick
   
 $(document).on('filterChange', function(e, data) {
-  console.log("FILTER CHANGE: ", data);
   for (var i = 0; i < window.markers.length; i++) {
     if (data.indexOf(window.markers[i].category) < 0) {
       window.markers[i].setVisible(false);
@@ -220,7 +218,6 @@ $(document).on('filterChange', function(e, data) {
 
 
   var markerClickHandler = function(e) {
-    console.log(window.markers);
     for(var i = 0; i < window.markers.length; i++) {
       if(e.latLng === window.markers[i].getPosition()) {
         $(document).trigger('markerClick', [window.markers[i].data]);

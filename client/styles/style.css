@@ -133,8 +133,8 @@ body{
   padding:10px;
 
   position: fixed;
-  top:90;
-  right:250px;
+  top: 90;
+  left: 100px;
 
   z-index: 2;
 }
