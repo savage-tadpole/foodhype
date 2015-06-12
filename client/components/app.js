@@ -1,5 +1,7 @@
 var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 
+var restaurantData;
+
 //////////////////////////
 /// React Views        ///
 //////////////////////////
@@ -8,19 +10,26 @@ var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 var AppView = React.createClass({displayName: "AppView",
   componentDidMount: function() {
     $(document).on('markerClick', this.handleMarkerClick);
+    $(document).on('sendData', this.handleDataFromMap);
   },
   handleMarkerClick: function(e, data) {
     //If the user clicks on a marker, update the state, which gets passed to the window view.
     this.setState({
-      selectedMarkerData:data
+      selectedMarkerData: data
     });
     this.render();
+  },
+  handleDataFromMap: function(e, data) {
+    this.setState({
+      restaurantData: data
+    });
   },
   getInitialState: function() {
     return {
       selectedMarkerData: {
         display: false,
-      }
+      }, 
+      restaurantData: {}
     }
   },
   render: function() {
@@ -29,10 +38,10 @@ var AppView = React.createClass({displayName: "AppView",
     return (
       React.createElement("div", {id: "wrapper"}, 
         React.createElement("h1", {id: "title"}, "Food Hyped"), 
-        React.createElement("input", {id: "pac-input", className: "controls", type: "text", placeholder: "Start typing here"}), 
         React.createElement(ReactCSSTransitionGroup, {transitionName: "window", transitionAppear: "true"}, 
           React.createElement(WindowView, {data: this.state.selectedMarkerData})
-        )
+        ), 
+        React.createElement(FilterView, {data: this.state.restaurantData})
       )
     )
   }
@@ -99,24 +108,49 @@ var WindowView = React.createClass({displayName: "WindowView",
   }
 });
 
-// var FilterView = React.createClass({
-//   componentDidMount: function() {
-//     // set up listener for 
-//   },
-//   getInitialState: function() {
+var FilterView = React.createClass({displayName: "FilterView",
+  getInitialState: function() {
+    return {
+      checkedCategories: []
+    }
+  },
+  handleFilterSelection: function(e) {
+    var newCheckedCategories = this.state.checkedCategories;
+    if (e.target.checked) {
+      newCheckedCategories.push(e.target.value);
+    } else {
+      var index = newCheckedCategories.indexOf(e.target.value);
+      newCheckedCategories.splice(index, 1);
+    }
 
-//   },
-//   render: function() {
-//     return (
-//       <div className="filterBox">
-//         <form method="get">
-//           <input type="checkbox" name="type" value="Mexican"> Mexican<br>
-//           <input type="checkbox" name="type" value="Vietnamese" checked> Vietnamese<br>
-//         </form>
-//       </div>
-//     );
-//   }
-// })
+    this.setState({
+      checkedCategories: newCheckedCategories
+    });
+    $(document).trigger('filterChange', [newCheckedCategories]);
+  }, 
+  render: function() {
+    if (Array.isArray(this.props.data)) {
+      var categories = this.props.data.map(function(restaurant) {
+        var restaurantCategory = restaurant.categories[0][0];
+        return (
+          React.createElement("div", null, 
+            React.createElement("input", {type: "checkbox", value: restaurantCategory}), " ", restaurantCategory
+          )
+        );
+      });
+
+      return (
+        React.createElement("div", {className: "filterBox"}, 
+          React.createElement("form", {onClick: this.handleFilterSelection}, 
+            categories
+          )
+        )
+      );
+    } else {
+      return (React.createElement("div", null));
+    }
+  }
+});
 
 // Renders the whole application
 React.render(

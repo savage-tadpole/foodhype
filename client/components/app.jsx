@@ -1,5 +1,7 @@
 var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 
+var restaurantData;
+
 //////////////////////////
 /// React Views        ///
 //////////////////////////
@@ -18,7 +20,6 @@ var AppView = React.createClass({
     this.render();
   },
   handleDataFromMap: function(e, data) {
-    console.log(data);
     this.setState({
       restaurantData: data
     });
@@ -40,6 +41,7 @@ var AppView = React.createClass({
         <ReactCSSTransitionGroup transitionName="window" transitionAppear="true">
           <WindowView data={this.state.selectedMarkerData} />
         </ReactCSSTransitionGroup>
+        <FilterView data={this.state.restaurantData}/>
       </div>
     )
   }
@@ -103,6 +105,50 @@ var WindowView = React.createClass({
         <a onClick={this.handleTwilioClick}><button className="linkButton" id="twilio"></button></a>
       </div>
     )
+  }
+});
+
+var FilterView = React.createClass({
+  getInitialState: function() {
+    return {
+      checkedCategories: []
+    }
+  },
+  handleFilterSelection: function(e) {
+    var newCheckedCategories = this.state.checkedCategories;
+    if (e.target.checked) {
+      newCheckedCategories.push(e.target.value);
+    } else {
+      var index = newCheckedCategories.indexOf(e.target.value);
+      newCheckedCategories.splice(index, 1);
+    }
+
+    this.setState({
+      checkedCategories: newCheckedCategories
+    });
+    $(document).trigger('filterChange', [newCheckedCategories]);
+  }, 
+  render: function() {
+    if (Array.isArray(this.props.data)) {
+      var categories = this.props.data.map(function(restaurant) {
+        var restaurantCategory = restaurant.categories[0][0];
+        return (
+          <div> 
+            <input type="checkbox" value = {restaurantCategory} /> {restaurantCategory}
+          </div>
+        );
+      });
+
+      return (
+        <div className="filterBox">
+          <form onClick={this.handleFilterSelection}>
+            {categories}
+          </form>
+        </div>
+      );
+    } else {
+      return (<div></div>);
+    }
   }
 });
 

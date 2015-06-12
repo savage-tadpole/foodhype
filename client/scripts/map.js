@@ -75,13 +75,13 @@ var searchBox = new google.maps.places.SearchBox(input);
 google.maps.event.addListener(searchBox, 'places_changed', searchHandler)
 
 var boundsChangedHandler = function(e) {
-  if (allRestaurants.data) {
-    console.log("TRIGGERING SENDDATA WITH: ", allRestaurants.data);
-    $(document).trigger('sendData', [allRestaurants.data]);
-  }
   var bounds = map.getBounds();
   searchBox.setBounds(bounds);
-}
+  
+  if (allRestaurants.data) {
+    $(document).trigger('sendData', [allRestaurants.data]);
+  }
+};
 
 google.maps.event.addListener(map, 'bounds_changed', boundsChangedHandler);
 
@@ -180,9 +180,11 @@ var getRestaurants = function(lat, long) {
       var restaurantPosition = new google.maps.LatLng(restaurantData[index].latitude, restaurantData[index].longitude);
       var marker = new google.maps.Marker({
         map:map,
+        category: restaurantData[index].categories[0][0],
         position:restaurantPosition,
         animation: google.maps.Animation.DROP,
-        icon: '../images/ball-marker.png'
+        icon: '../images/ball-marker.png',
+        visible: false
       });
 
       // Attach restaurant data to marker object
@@ -204,8 +206,18 @@ var getRestaurants = function(lat, long) {
     map.fitBounds(bounds);
   }.bind(this)); //not sure what the bind is for... -Nick
   
+$(document).on('filterChange', function(e, data) {
+  for (var i = 0; i < window.markers.length; i++) {
+    if (data.indexOf(window.markers[i].category) < 0) {
+      window.markers[i].setVisible(false);
+    } else {
+      window.markers[i].setVisible(true);
+    }
+  }
+});
+
+
   var markerClickHandler = function(e) {
-    console.log(window.markers);
     for(var i = 0; i < window.markers.length; i++) {
       if(e.latLng === window.markers[i].getPosition()) {
         $(document).trigger('markerClick', [window.markers[i].data]);
