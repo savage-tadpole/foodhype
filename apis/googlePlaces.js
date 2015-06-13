@@ -9,6 +9,7 @@ module.exports = {
   }
 }
 
+
 var getGooglePlacesInfo = function(currentBizName, loc, callback) {
 
   console.log('inside google places');
@@ -42,3 +43,8 @@ var getGooglePlacesInfo = function(currentBizName, loc, callback) {
     }
   });
 }
+
+
+var cljs = require('../cljs');
+getGooglePlacesInfo = cljs.get_google_places_info;
+

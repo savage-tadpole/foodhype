@@ -60,10 +60,10 @@ module.exports = {
       checkIfAllApisHaveResponded(thisRestaurantApiData, callback);
     });
 
-    // gPlaces.getApiData(thisRestaurant, function(returnedData) {
-    //   thisRestaurantApiData.googlePlacesData = returnedData;
-    //   checkIfAllApisHaveResponded(thisRestaurantApiData, callback);
-    // });
+     gPlaces.getApiData(thisRestaurant, function(returnedData) {
+       thisRestaurantApiData.googlePlacesData = returnedData;
+       checkIfAllApisHaveResponded(thisRestaurantApiData, callback);
+     });
 
     instagram.getApiData(thisRestaurant.name, thisRestaurant.latitude , function(returnedData) {
       thisRestaurantApiData.instagramData = returnedData;
