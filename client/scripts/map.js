@@ -209,12 +209,16 @@ var getRestaurants = function(lat, long) {
   }.bind(this)); //not sure what the bind is for... -Nick
   
 $(document).on('filterChange', function(e, data) {
+  $('.listView').empty();
   for (var i = 0; i < window.markers.length; i++) {
     if (data.indexOf(window.markers[i].category) < 0) {
       window.markers[i].setVisible(false);
     } else {
+      var rest = window.markers[i].data
+      var $rest = $('<div class="item"><a href='+rest.url+'>'+rest.name+'</a>:' + rest.score + '</div>');
+      $('.listView').append($rest);
       window.markers[i].setVisible(true);
-    }
+    }  
   }
 });
 

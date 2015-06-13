@@ -16,7 +16,7 @@ app.use(bodyParser.json());
 
 var yelp = require("yelp").createClient(keys.yelp);
 
-var returnNum = 14;
+var returnNum = 20;
 var allBizs;
 
 app.post('/twilioSend', function(req, res) {
