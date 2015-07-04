@@ -37,7 +37,6 @@ var AppView = React.createClass({
       // The WindowView component will be updated with data associated with a clicked marker
     return (
       <div id="wrapper">
-        <h1 id="title">Food Hyped</h1>
         <ReactCSSTransitionGroup transitionName="window" transitionAppear="true">
           <WindowView data={this.state.selectedMarkerData} />
         </ReactCSSTransitionGroup>
@@ -140,7 +139,7 @@ var FilterView = React.createClass({
       });
 
       return (
-        <div className="filterBox">
+        <div className="filterBox col-md-4">
           <form onClick={this.handleFilterSelection}>
             {categories}
           </form>
